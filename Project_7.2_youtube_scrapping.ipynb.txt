@@ -1,0 +1,206 @@
+﻿Go to this given URL and solve the following questions
+URL: https://www.youtube.com/@PW-Foundation/videos
+In [1]:
+pip install selenium
+
+
+Requirement already satisfied: selenium in /Users/rachit/anaconda3/lib/python3.10/site-packages (4.10.0)
+Requirement already satisfied: trio~=0.17 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from selenium) (0.22.1)
+Requirement already satisfied: certifi>=2021.10.8 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from selenium) (2022.12.7)
+Requirement already satisfied: trio-websocket~=0.9 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from selenium) (0.10.3)
+Requirement already satisfied: urllib3[socks]<3,>=1.26 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from selenium) (1.26.14)
+Requirement already satisfied: sortedcontainers in /Users/rachit/anaconda3/lib/python3.10/site-packages (from trio~=0.17->selenium) (2.4.0)
+Requirement already satisfied: sniffio in /Users/rachit/anaconda3/lib/python3.10/site-packages (from trio~=0.17->selenium) (1.2.0)
+Requirement already satisfied: exceptiongroup>=1.0.0rc9 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from trio~=0.17->selenium) (1.1.2)
+Requirement already satisfied: attrs>=20.1.0 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from trio~=0.17->selenium) (22.1.0)
+Requirement already satisfied: outcome in /Users/rachit/anaconda3/lib/python3.10/site-packages (from trio~=0.17->selenium) (1.2.0)
+Requirement already satisfied: idna in /Users/rachit/anaconda3/lib/python3.10/site-packages (from trio~=0.17->selenium) (3.4)
+Requirement already satisfied: wsproto>=0.14 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from trio-websocket~=0.9->selenium) (1.2.0)
+Requirement already satisfied: PySocks!=1.5.7,<2.0,>=1.5.6 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from urllib3[socks]<3,>=1.26->selenium) (1.7.1)
+Requirement already satisfied: h11<1,>=0.9.0 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from wsproto>=0.14->trio-websocket~=0.9->selenium) (0.14.0)
+Note: you may need to restart the kernel to use updated packages.
+
+
+In [2]:
+pip install bs4
+
+
+Requirement already satisfied: bs4 in /Users/rachit/anaconda3/lib/python3.10/site-packages (0.0.1)
+Requirement already satisfied: beautifulsoup4 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from bs4) (4.11.1)
+Requirement already satisfied: soupsieve>1.2 in /Users/rachit/anaconda3/lib/python3.10/site-packages (from beautifulsoup4->bs4) (2.3.2.post1)
+Note: you may need to restart the kernel to use updated packages.
+
+
+In [3]:
+from selenium import webdriver
+import pandas as pd
+from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
+
+
+In [4]:
+browser = webdriver.Chrome()
+
+
+In [5]:
+url = "https://www.youtube.com/@PW-Foundation/videos"
+
+
+In [6]:
+browser.get(url)
+
+
+Q1. Write a python program to extract the video URL of the first five videos.
+In [7]:
+#Finding Video Url by using Tag Name
+links = browser.find_elements(By.TAG_NAME,"a")
+video_urls = []
+for i in links:
+    url = i.get_attribute("href")
+    video_urls.append(url)
+    
+first_5_video_links = []
+for url in video_urls:
+    if url == None or "/watch?v=" not in url or url in first_5_video_links:
+        continue
+    else:
+        if len(first_5_video_links) == 5:
+            break
+        first_5_video_links.append(url)
+first_5_video_links
+
+
+Out[7]:
+['https://www.youtube.com/watch?v=dArUpCasmnE',
+ 'https://www.youtube.com/watch?v=HqG2QchBw8Y',
+ 'https://www.youtube.com/watch?v=1izKrQHyx9M',
+ 'https://www.youtube.com/watch?v=jXAb1evxaJc',
+ 'https://www.youtube.com/watch?v=2dn7XMxRtPE']
+Q2. Write a python program to extract the URL of the video thumbnails of the first five videos.
+In [8]:
+thumbnail = browser.find_elements(By.XPATH,"//*[@id='thumbnail']/yt-image/img")
+thumbnail_list=[]
+for i in thumbnail:
+    t=i.get_attribute("src")
+    if t == None:
+        continue
+    thumbnail_list.append(t)
+    
+thumbnail_list.append("Url Not found")
+thumbnail_list
+
+
+Out[8]:
+['https://i.ytimg.com/vi/dArUpCasmnE/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCdiUURSFwzHKBaqzNQnNYVFf1PZA',
+ 'https://i.ytimg.com/vi/HqG2QchBw8Y/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB2qRg5GsfQROPt6YiiG3CXXiExjg',
+ 'https://i.ytimg.com/vi/1izKrQHyx9M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCvjSUCwD4j5ZVE_nUMLg6QNCpkfg',
+ 'https://i.ytimg.com/vi/jXAb1evxaJc/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBs0CPJgSnMgMMu57VSlYuPtsxS5w',
+ 'Url Not found']
+Q3. Write a python program to extract the title of the first five videos.
+In [9]:
+#Finding Title by using TagName
+yt_link=browser.find_elements(By.TAG_NAME, "yt-formatted-string")
+link =[]
+for i in yt_link:
+    temp=i.text
+    link.append(temp)
+link=link[26:]
+title = []
+for i in link:
+    if i == '':
+        continue
+    else:
+        if len(title)==5:
+            break
+        title.append(i)
+        
+title
+
+
+Out[9]:
+['Launching PAHAL Batch 🔥 For Class 11th Arts Students 💪',
+ 'Launching FUNDO For Class - 6th to 8th Students 🔥💯 || Ab Hoga Padhai Ke Sath FUN 🤩',
+ '⚡Unleashing the Power of PW Internationally⚡| Launching Physics Wallah Gulf',
+ 'Big Announcement for Gulf Region Aspirants 🔥| Physics Wallah Gulf Channel Trailer🚀',
+ 'Arjuna JEE v/s Arjuna NEET 🏏- Class 11th Faculties ka Cricket Match 🔥']
+In [10]:
+#Finding First 5 Title by using XPath
+you_link = browser.find_elements(By.XPATH,"//*[@id='video-title']")
+title_list = []
+for i in you_link:
+    t=i.text
+    if len(title_list) ==5:
+        break
+    title_list.append(t)
+    
+title_list
+
+
+Out[10]:
+['Launching PAHAL Batch 🔥 For Class 11th Arts Students 💪',
+ 'Launching FUNDO For Class - 6th to 8th Students 🔥💯 || Ab Hoga Padhai Ke Sath FUN 🤩',
+ '⚡Unleashing the Power of PW Internationally⚡| Launching Physics Wallah Gulf',
+ 'Big Announcement for Gulf Region Aspirants 🔥| Physics Wallah Gulf Channel Trailer🚀',
+ 'Arjuna JEE v/s Arjuna NEET 🏏- Class 11th Faculties ka Cricket Match 🔥']
+Q4. Write a python program to extract the number of views of the first five videos.
+In [11]:
+views=browser.find_elements(By.XPATH,"//*[@id='metadata-line']/span[1]")
+views_list=[]
+for i in views:
+    t=i.text
+    if len(views_list) ==5:
+        break
+    views_list.append(t)
+    
+views_list
+
+
+Out[11]:
+['21K views', '21K views', '65K views', '97K views', '375K views']
+Q5. Write a python program to extract the time of posting of video for the first five videos.
+In [12]:
+timee = browser.find_elements(By.XPATH,"//*[@id='metadata-line']/span[2]")
+time_list = []
+for i in timee:
+    t=i.text
+    if len(time_list) ==5:
+        break
+    time_list.append(t)
+    
+time_list
+
+
+Out[12]:
+['2 days ago', '6 days ago', '3 weeks ago', '1 month ago', '1 month ago']
+Q6. Save all the data scraped in the above questions in a CSV file.
+In [13]:
+import csv
+
+
+In [14]:
+reviews=[]
+for i in range(5):
+        mydict = {"VideoLink": str(first_5_video_links[i]),"ThumbnailUrl": str(thumbnail_list[i]),"VideoTitle": str(title_list[i]), "Views": str(views_list[i]), "Time of Upload": str(time_list[i])}
+        reviews.append(mydict)
+
+
+with open("Video_details.csv", "w", newline='', encoding='utf-8') as fw:
+    headers = ["VideoLink","ThumbnailUrl","VideoTitle","Views", "Time of Upload"]
+    writer = csv.DictWriter(fw, fieldnames=headers)
+    writer.writeheader()
+    writer.writerows(reviews)
+
+
+In [15]:
+with open("Video_details.csv",'r') as f:
+    read = csv.reader(f)
+    for i in read:
+        print(i)
+
+
+['VideoLink', 'ThumbnailUrl', 'VideoTitle', 'Views', 'Time of Upload']
+['https://www.youtube.com/watch?v=dArUpCasmnE', 'https://i.ytimg.com/vi/dArUpCasmnE/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCdiUURSFwzHKBaqzNQnNYVFf1PZA', 'Launching PAHAL Batch 🔥 For Class 11th Arts Students 💪', '21K views', '2 days ago']
+['https://www.youtube.com/watch?v=HqG2QchBw8Y', 'https://i.ytimg.com/vi/HqG2QchBw8Y/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB2qRg5GsfQROPt6YiiG3CXXiExjg', 'Launching FUNDO For Class - 6th to 8th Students 🔥💯 || Ab Hoga Padhai Ke Sath FUN 🤩', '21K views', '6 days ago']
+['https://www.youtube.com/watch?v=1izKrQHyx9M', 'https://i.ytimg.com/vi/1izKrQHyx9M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCvjSUCwD4j5ZVE_nUMLg6QNCpkfg', '⚡Unleashing the Power of PW Internationally⚡| Launching Physics Wallah Gulf', '65K views', '3 weeks ago']
+['https://www.youtube.com/watch?v=jXAb1evxaJc', 'https://i.ytimg.com/vi/jXAb1evxaJc/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBs0CPJgSnMgMMu57VSlYuPtsxS5w', 'Big Announcement for Gulf Region Aspirants 🔥| Physics Wallah Gulf Channel Trailer🚀', '97K views', '1 month ago']
+['https://www.youtube.com/watch?v=2dn7XMxRtPE', 'Url Not found', 'Arjuna JEE v/s Arjuna NEET 🏏- Class 11th Faculties ka Cricket Match 🔥', '375K views', '1 month ago']
